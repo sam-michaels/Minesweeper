@@ -94,8 +94,9 @@ void MainWindow::revealSpace(int row, int col) {
 
     if (checkMines(row, col) > 0) {return;}
 
-    for (int x = - 1; x < 1; x++) {
-        for (int y = -1; y < 1; y++) {
+    for (int x = - 1; x <= 1; x++) {
+        for (int y = -1; y <= 1; y++) {
+            if (x == 0 && y == 0) {continue;}
             revealSpace(row + x, col + y);
         }
     }
@@ -105,7 +106,13 @@ void MainWindow::markAllEmpty() {
     for (int i = 0; i < rows; i ++) {
         for (int j = 0; j < cols; j++) {
             if (revealed[i][j] && buttons[i][j]->text().isEmpty()) {
-                buttons[i][j] ->setText(QString::number(checkMines(i, j)));
+                if (checkMines(i, j) == 0) {
+                    buttons[i][j] -> setStyleSheet("background-color : black");
+                }
+                else {
+                    buttons[i][j] ->setText(QString::number(checkMines(i, j)));
+
+                }
             }
         }
     }
