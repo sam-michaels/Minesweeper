@@ -7,8 +7,8 @@ void GameButton:: mousePressEvent(QMouseEvent *e) {
     if (e ->button() == Qt :: RightButton) {
         emit rightClicked();
     }
-    else {
+    else if (e -> button() == Qt :: LeftButton){
         // will use regular left click event
-        QPushButton :: mousePressEvent(e);
+        emit clicked();     //qt automatically assumes left clicked
     }
 }
