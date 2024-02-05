@@ -20,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
             // For right-click, you might need to subclass QPushButton or handle it differently
         }
     }
+    revealMines();
 }
 
 MainWindow::~MainWindow() {
@@ -33,27 +34,24 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::openSpace(int row, int col) {
+    //revealMines();
     if (mineField[row][col]) {
+        revealed[row][col] = true;
         revealMines();
     }
     else {
-
+        revealSpace(row, col);
     }
 }
 void MainWindow::initializeMineField() {
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
-            mineField[i][j] = false;
-        }
-    }
 
     while (mineCount < maxMines) {
 
         mineCol = arc4random() % 30;
         mineRow = arc4random() % 16;
 
-        if (!mineField[mineCol][mineRow]) {
-            mineField[mineCol][mineRow] = true;
+        if (!mineField[mineRow][mineCol]) {
+            mineField[mineRow][mineCol] = true;
             mineCount++;
         }
     }
@@ -68,18 +66,47 @@ void MainWindow::revealMines() {
 
     }
 }
-void MainWindow::checkMines(int row, int col) {
+int MainWindow::checkMines(int row, int col) {
 
     int numMines = 0;
-    int spotsChecked = 0;
 
-    while (spotsChecked < 8) {
-        if (spotsChecked % 3 == 0) {
-            row++;
-            col -= 3;
+    for (int i = row - 1; i <= row + 1; i++) {
+        for (int j = col - 1; j <= col + 1; j++) {
+            if (isValidSpace(i, j)) {
+                if (mineField[i][j]) {
+                    numMines++;
+                }
+            }
         }
-        else {
-            col++;
+    }
+
+    return numMines;
+}
+bool MainWindow::isValidSpace(int row, int col) {
+    return (row >= 0 && row < 16 && col >= 0 && col < 30 && !revealed[row][col]);
+}
+void MainWindow::revealSpace(int row, int col) {
+
+    if (!isValidSpace(row, col)) {return;}
+
+    revealed[row][col] = true;
+    markAllEmpty();
+
+    if (checkMines(row, col) > 0) {return;}
+
+    for (int x = - 1; x < 1; x++) {
+        for (int y = -1; y < 1; y++) {
+            revealSpace(row + x, col + y);
+        }
+    }
+}
+void MainWindow::markAllEmpty() {
+
+    for (int i = 0; i < rows; i ++) {
+        for (int j = 0; j < cols; j++) {
+            if (revealed[i][j] && buttons[i][j]->text().isEmpty()) {
+                buttons[i][j] ->setText(QString::number(checkMines(i, j)));
+            }
         }
     }
 }
