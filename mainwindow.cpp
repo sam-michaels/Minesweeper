@@ -16,11 +16,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
             buttons[i][j] = new GameButton(centralWidget);
             buttons[i][j]->setFixedSize(35, 40); // Adjust size as needed
             gridLayout->addWidget(buttons[i][j], i, j);
-            connect(buttons[i][j], &GameButton::clicked, this, [this, i, j] { openSpace(i, j); });
-            // For right-click, you might need to subclass QPushButton or handle it differently
+            connect(buttons[i][j], &GameButton::clicked, this, [this, i, j] { openSpace(i, j); });  // Handles left click functionality
+            connect(buttons[i][j], &GameButton::rightClicked, this, [this, i, j] {toggleFlag(i, j); }); // Handles right clicked functionality
         }
     }
-    revealMines();
 }
 
 MainWindow::~MainWindow() {
@@ -36,8 +35,9 @@ MainWindow::~MainWindow() {
 void MainWindow::openSpace(int row, int col) {
     //revealMines();
     if (mineField[row][col]) {
-        revealed[row][col] = true;
-        revealMines();
+        buttons[row][col] -> setIcon(QIcon("/Users/sammichaels/CSClasses/3307/IndividualAssignment/Minesweeper/minesweeper_icons/bomb_explode_sm.png"));
+        buttons[row][col] ->setIconSize(QSize(35,40));        revealed[row][col] = true;
+        revealMines(row, col);
     }
     else {
         revealSpace(row, col);
@@ -56,11 +56,12 @@ void MainWindow::initializeMineField() {
         }
     }
 }
-void MainWindow::revealMines() {
+void MainWindow::revealMines(int row, int col) {
     for (int i = 0; i < rows; i ++) {
         for (int j = 0; j < cols; j ++) {
-            if (mineField[i][j]) {
-                buttons[i][j] -> setText("Yes");
+            if (mineField[i][j] && i != row && j != col) {
+                buttons[i][j] -> setIcon(QIcon("/Users/sammichaels/CSClasses/3307/IndividualAssignment/Minesweeper/minesweeper_icons/bomb.png"));
+                buttons[i][j] ->setIconSize(QSize(35,40));
             }
         }
 
@@ -118,5 +119,22 @@ void MainWindow::markAllEmpty() {
     }
 }
 void MainWindow::toggleFlag(int row, int col) {
-    // Logic for flagging a space
+
+    if (!isValidSpace(row, col)) {return;}
+
+    if (revealed[row][col]) {return;}
+
+    if (flagged[row][col]) {
+        buttons[row][col] -> setIcon(QIcon());
+        if (buttons[row][col]->text() == "?") {
+            flagged[row][col] = false;
+            buttons[row][col] -> setText("");
+        }
+        else {buttons[row][col] -> setText("?");}
+    }
+    else {
+        buttons[row][col] -> setIcon(QIcon("/Users/sammichaels/CSClasses/3307/IndividualAssignment/Minesweeper/minesweeper_icons/mine_flag.png"));
+        buttons[row][col] ->setIconSize(QSize(35,40));
+        flagged[row][col] = true;
+    }
 }
