@@ -1,5 +1,5 @@
 #include <QMainWindow>
-#include <QPushButton>
+#include "GameButton.h"
 #include <QGridLayout>
 
 
@@ -16,7 +16,7 @@ private:
     bool revealed[16][30] = {false};
     QWidget *centralWidget;
     QGridLayout *gridLayout;
-    QPushButton ***buttons; // 2D array of buttons
+    GameButton ***buttons; // 2D array of buttons
 
     const int rows = 16;
     const int cols = 30;

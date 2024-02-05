@@ -9,7 +9,7 @@ class GameButton : public QPushButton {
     Q_OBJECT
 
 public:
-    explicit GameButton(QWidget *parent = 0);
+    explicit GameButton(QWidget *parent = nullptr);
 
 private slots:
     void mousePressEvent(QMouseEvent *e);

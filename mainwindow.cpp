@@ -7,16 +7,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     setCentralWidget(centralWidget);
 
     gridLayout = new QGridLayout(centralWidget);
-    buttons = new QPushButton**[rows];
+    buttons = new GameButton**[rows];
     initializeMineField();
 
     for (int i = 0; i < rows; i++) {
-        buttons[i] = new QPushButton*[cols];
+        buttons[i] = new GameButton*[cols];
         for (int j = 0; j < cols; j++) {
-            buttons[i][j] = new QPushButton(centralWidget);
+            buttons[i][j] = new GameButton(centralWidget);
             buttons[i][j]->setFixedSize(35, 40); // Adjust size as needed
             gridLayout->addWidget(buttons[i][j], i, j);
-            connect(buttons[i][j], &QPushButton::clicked, this, [this, i, j] { openSpace(i, j); });
+            connect(buttons[i][j], &GameButton::clicked, this, [this, i, j] { openSpace(i, j); });
             // For right-click, you might need to subclass QPushButton or handle it differently
         }
     }
