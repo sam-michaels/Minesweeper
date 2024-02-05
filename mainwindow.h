@@ -22,11 +22,12 @@ private:
     const int rows = 16;
     const int cols = 30;
     const int maxMines = 99;
-
+    const int maxFlags = 99;
 
     int mineCol;
     int mineRow;
     int mineCount;          //will keep track of how many mines are selected
+    int flagCount;          // keep track of how many flags have been placed
 
     void setupGrid();
     void openSpace(int row, int col); // function to handle space opening
@@ -37,5 +38,6 @@ private:
     bool isValidSpace(int row, int col);
     void revealSpace(int row, int col);
     void markAllEmpty();
+    void clearFlag(int row, int col);
 
 };

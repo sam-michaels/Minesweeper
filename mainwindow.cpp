@@ -3,6 +3,7 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     mineCount = 0;
+    flagCount = 0;
     centralWidget = new QWidget(this);
     setCentralWidget(centralWidget);
 
@@ -35,11 +36,14 @@ MainWindow::~MainWindow() {
 void MainWindow::openSpace(int row, int col) {
     //revealMines();
     if (mineField[row][col]) {
-        buttons[row][col] -> setIcon(QIcon("/Users/sammichaels/CSClasses/3307/IndividualAssignment/Minesweeper/minesweeper_icons/bomb_explode_sm.png"));
+        buttons[row][col] -> setIcon(QIcon(":/images/minesweeper_icons/bomb_explode_sm.png"));
         buttons[row][col] ->setIconSize(QSize(35,40));        revealed[row][col] = true;
         revealMines(row, col);
     }
     else {
+        if (flagged[row][col]) {
+            clearFlag(row, col);
+        }
         revealSpace(row, col);
     }
 }
@@ -60,7 +64,7 @@ void MainWindow::revealMines(int row, int col) {
     for (int i = 0; i < rows; i ++) {
         for (int j = 0; j < cols; j ++) {
             if (mineField[i][j] && i != row && j != col) {
-                buttons[i][j] -> setIcon(QIcon("/Users/sammichaels/CSClasses/3307/IndividualAssignment/Minesweeper/minesweeper_icons/bomb.png"));
+                buttons[i][j] -> setIcon(QIcon(":/images/minesweeper_icons/bomb.png"));
                 buttons[i][j] ->setIconSize(QSize(35,40));
             }
         }
@@ -118,23 +122,35 @@ void MainWindow::markAllEmpty() {
         }
     }
 }
+void MainWindow:: clearFlag(int row, int col) {
+
+    if (!flagged[row][col]) {return;}
+
+    buttons[row][col] -> setIcon(QIcon());
+    buttons[row][col] -> setText("");
+    flagged[row][col] = false;
+    flagCount--;
+}
 void MainWindow::toggleFlag(int row, int col) {
 
     if (!isValidSpace(row, col)) {return;}
 
     if (revealed[row][col]) {return;}
 
-    if (flagged[row][col]) {
-        buttons[row][col] -> setIcon(QIcon());
-        if (buttons[row][col]->text() == "?") {
-            flagged[row][col] = false;
-            buttons[row][col] -> setText("");
-        }
-        else {buttons[row][col] -> setText("?");}
-    }
-    else {
-        buttons[row][col] -> setIcon(QIcon("/Users/sammichaels/CSClasses/3307/IndividualAssignment/Minesweeper/minesweeper_icons/mine_flag.png"));
+    if (flagCount == maxFlags) {return;}
+
+    if (!flagged[row][col]) {
+        buttons[row][col] -> setIcon(QIcon(":/images/minesweeper_icons/mine_flag.png"));
         buttons[row][col] ->setIconSize(QSize(35,40));
         flagged[row][col] = true;
+        flagCount++;
+    }
+    else {
+        if (buttons[row][col] -> text() == "?") {
+            clearFlag(row, col);
+        }
+        else {
+            buttons[row][col] -> setText("?");
+        }
     }
 }

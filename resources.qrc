@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>minesweeper_icons/mine_flag.png</file>
+        <file>minesweeper_icons/bomb.png</file>
+        <file>minesweeper_icons/bomb_explode.png</file>
+        <file>minesweeper_icons/bomb_explode_sm.png</file>
+    </qresource>
+</RCC>
