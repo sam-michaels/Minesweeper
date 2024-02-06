@@ -1,6 +1,10 @@
 #include <QMainWindow>
+#include <QApplication>
 #include "GameButton.h"
+#include "dialog.h"
 #include <QGridLayout>
+#include <QProcess>
+#include <QTimer>
 
 
 class MainWindow : public QMainWindow {
@@ -18,6 +22,7 @@ private:
     QWidget *centralWidget;
     QGridLayout *gridLayout;
     GameButton ***buttons; // 2D array of buttons
+    Dialog *popup;
 
     const int rows = 16;
     const int cols = 30;
@@ -39,5 +44,6 @@ private:
     void revealSpace(int row, int col);
     void markAllEmpty();
     void clearFlag(int row, int col);
-
+    void closeApp();
+    void resetBoard();
 };

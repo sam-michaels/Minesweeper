@@ -9,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     gridLayout = new QGridLayout(centralWidget);
     buttons = new GameButton**[rows];
+    popup = new Dialog(this);
     initializeMineField();
 
     for (int i = 0; i < rows; i++) {
@@ -18,9 +19,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
             buttons[i][j]->setFixedSize(35, 40); // Adjust size as needed
             gridLayout->addWidget(buttons[i][j], i, j);
             connect(buttons[i][j], &GameButton::clicked, this, [this, i, j] { openSpace(i, j); });  // Handles left click functionality
-            connect(buttons[i][j], &GameButton::rightClicked, this, [this, i, j] {toggleFlag(i, j); }); // Handles right clicked functionality
+            connect(buttons[i][j], &GameButton::rightClicked, this, [this, i, j] { toggleFlag(i, j); }); // Handles right clicked functionality
         }
     }
+    connect(popup, &Dialog::closeApp, this, &MainWindow::closeApp);
+    connect(popup, &Dialog::restartApp, this, &MainWindow::resetBoard);
 }
 
 MainWindow::~MainWindow() {
@@ -39,6 +42,8 @@ void MainWindow::openSpace(int row, int col) {
         buttons[row][col] -> setIcon(QIcon(":/images/minesweeper_icons/bomb_explode_sm.png"));
         buttons[row][col] ->setIconSize(QSize(35,40));        revealed[row][col] = true;
         revealMines(row, col);
+
+        popup -> exec();
     }
     else {
         if (flagged[row][col]) {
@@ -135,8 +140,6 @@ void MainWindow::toggleFlag(int row, int col) {
 
     if (!isValidSpace(row, col)) {return;}
 
-    if (revealed[row][col]) {return;}
-
     if (flagCount == maxFlags) {return;}
 
     if (!flagged[row][col]) {
@@ -150,7 +153,28 @@ void MainWindow::toggleFlag(int row, int col) {
             clearFlag(row, col);
         }
         else {
+            buttons[row][col] -> setIcon(QIcon());
             buttons[row][col] -> setText("?");
         }
     }
+}
+void MainWindow::closeApp() {
+    QCoreApplication::quit();
+}
+void MainWindow::resetBoard() {
+
+    QString app = QCoreApplication::applicationFilePath();
+    QStringList args = QCoreApplication::arguments();
+
+    args.removeFirst();
+
+    bool started = QProcess::startDetached(app, args);
+
+    if (started) {
+        QTimer::singleShot(500, qApp, &QCoreApplication::quit);
+    }
+    else {
+        qDebug() << "Could not restart the application.";
+    }
+    QCoreApplication::quit();
 }
