@@ -1,10 +1,18 @@
+/*
+ * Name: Samuel Michaels Rodriguez
+ * Date: Feb. 6 2024
+ * This file creates the popup when when the user selcts a bomb and loses the game
+*/
+
+
 #include "dialog.h"
 
 Dialog::Dialog(QWidget *parent) : QDialog(parent) {
 
+    // all the variables and pointers used for creating a popup
     layout = new QVBoxLayout(this);
-    buttonLayout = new QHBoxLayout(this);
-    msgImgLayout = new QHBoxLayout(this);
+    buttonLayout = new QHBoxLayout(this);   // used to create a layout for the buttons created
+    msgImgLayout = new QHBoxLayout(this);   // used to create a layout for the image and the message
 
     exitButton = new QPushButton("Exit");
     tryAgainButton = new QPushButton("Try Again?");
@@ -29,11 +37,6 @@ Dialog::Dialog(QWidget *parent) : QDialog(parent) {
     setLayout(layout);
     setWindowTitle("Uh-Oh!");
 
-    connect(exitButton, &QPushButton::clicked, this, &Dialog::closeApp);
-    connect(tryAgainButton, &QPushButton::clicked, this, &Dialog::restartApp);
+    connect(exitButton, &QPushButton::clicked, this, &Dialog::closeApp);        // conncets the action of clicking the button with the closeApp signal
+    connect(tryAgainButton, &QPushButton::clicked, this, &Dialog::restartApp);  // connects the action of clicking the button with the restartApp signal
 }
-
-// void Dialog::restartGame() {
-//     emit restartApp();
-//     this -> accept();
-// }

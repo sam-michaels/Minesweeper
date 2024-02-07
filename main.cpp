@@ -1,3 +1,8 @@
+/*
+ * Name: Samuel Michaels Rodriguez
+ * Date: Feb. 6 2024
+ *
+*/
 #include "mainwindow.h"
 
 #include <QApplication>
