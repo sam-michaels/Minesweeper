@@ -46,4 +46,8 @@ private:
     void clearFlag(int row, int col);
     void closeApp();
     void resetBoard();
+
+    void resetFlagged();
+    void resetRevealed();
+    void resetMineField();
 };

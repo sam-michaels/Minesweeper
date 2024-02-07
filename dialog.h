@@ -19,8 +19,8 @@ signals:
     void restartApp(); // Signal to indicate the game should be restarted
     void closeApp();
 
-public slots:
-    void restartGame();
+// public slots:
+//     void restartGame();
 
 private:
 

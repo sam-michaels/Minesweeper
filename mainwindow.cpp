@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     }
     connect(popup, &Dialog::closeApp, this, &MainWindow::closeApp);
     connect(popup, &Dialog::restartApp, this, &MainWindow::resetBoard);
+
 }
 
 MainWindow::~MainWindow() {
@@ -34,13 +35,15 @@ MainWindow::~MainWindow() {
         delete[] buttons[i];
     }
     delete[] buttons;
+
 }
 
 void MainWindow::openSpace(int row, int col) {
-    //revealMines();
+
     if (mineField[row][col]) {
         buttons[row][col] -> setIcon(QIcon(":/images/minesweeper_icons/bomb_explode_sm.png"));
-        buttons[row][col] ->setIconSize(QSize(35,40));        revealed[row][col] = true;
+        buttons[row][col] ->setIconSize(QSize(35,40));
+        revealed[row][col] = true;
         revealMines(row, col);
 
         popup -> exec();
@@ -66,11 +69,18 @@ void MainWindow::initializeMineField() {
     }
 }
 void MainWindow::revealMines(int row, int col) {
+
     for (int i = 0; i < rows; i ++) {
         for (int j = 0; j < cols; j ++) {
-            if (mineField[i][j] && i != row && j != col) {
-                buttons[i][j] -> setIcon(QIcon(":/images/minesweeper_icons/bomb.png"));
-                buttons[i][j] ->setIconSize(QSize(35,40));
+            if (mineField[i][j]) {
+                if (i == row && j == col) {
+                    buttons[i][j] -> setIcon(QIcon(":/images/minesweeper_icons/bomb_explode_sm.png"));
+                    buttons[i][j] ->setIconSize(QSize(35,40));
+                }
+                else {
+                    buttons[i][j] -> setIcon(QIcon(":/images/minesweeper_icons/bomb.png"));
+                    buttons[i][j] ->setIconSize(QSize(35,40));
+                }
             }
         }
 
@@ -120,6 +130,7 @@ void MainWindow::markAllEmpty() {
                     buttons[i][j] -> setStyleSheet("background-color : black");
                 }
                 else {
+                    if (mineField[i][j]) {continue;}
                     buttons[i][j] ->setText(QString::number(checkMines(i, j)));
 
                 }
@@ -159,22 +170,69 @@ void MainWindow::toggleFlag(int row, int col) {
     }
 }
 void MainWindow::closeApp() {
+
     QCoreApplication::quit();
 }
+
 void MainWindow::resetBoard() {
 
-    QString app = QCoreApplication::applicationFilePath();
-    QStringList args = QCoreApplication::arguments();
+    //deleting all instances of the board and resetting to initial state
 
-    args.removeFirst();
-
-    bool started = QProcess::startDetached(app, args);
-
-    if (started) {
-        QTimer::singleShot(500, qApp, &QCoreApplication::quit);
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            delete buttons[i][j];
+        }
+        delete[] buttons[i];
     }
-    else {
-        qDebug() << "Could not restart the application.";
+    delete[] buttons;
+
+    mineCount = 0;
+    flagCount = 0;
+    resetFlagged();
+    resetRevealed();
+    resetMineField();
+
+    // reinitializing the board
+
+    buttons = new GameButton**[rows];
+
+    for (int i = 0; i < rows; i++) {
+        buttons[i] = new GameButton*[cols];
+        for (int j = 0; j < cols; j++) {
+            buttons[i][j] = new GameButton(centralWidget);
+            buttons[i][j]->setFixedSize(35, 40); // Adjust size as needed
+            gridLayout->addWidget(buttons[i][j], i, j);
+            connect(buttons[i][j], &GameButton::clicked, this, [this, i, j] { openSpace(i, j); });  // Handles left click functionality
+            connect(buttons[i][j], &GameButton::rightClicked, this, [this, i, j] { toggleFlag(i, j); }); // Handles right clicked functionality
+        }
     }
-    QCoreApplication::quit();
+    connect(popup, &Dialog::closeApp, this, &MainWindow::closeApp);
+    connect(popup, &Dialog::restartApp, this, &MainWindow::resetBoard);
+
+    initializeMineField();
+    popup -> close();
+
+}
+void MainWindow::resetFlagged() {
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            flagged[i][j] = false;
+        }
+    }
+}
+
+void MainWindow::resetMineField() {
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            mineField[i][j] = false;
+        }
+    }
+}
+
+void MainWindow::resetRevealed() {
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            revealed[i][j] = false;
+        }
+    }
 }

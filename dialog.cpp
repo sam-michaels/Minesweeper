@@ -30,10 +30,10 @@ Dialog::Dialog(QWidget *parent) : QDialog(parent) {
     setWindowTitle("Uh-Oh!");
 
     connect(exitButton, &QPushButton::clicked, this, &Dialog::closeApp);
-    connect(tryAgainButton, &QPushButton::clicked, this, &Dialog::restartGame);
+    connect(tryAgainButton, &QPushButton::clicked, this, &Dialog::restartApp);
 }
 
-void Dialog::restartGame() {
-    emit restartApp();
-    this -> accept();
-}
+// void Dialog::restartGame() {
+//     emit restartApp();
+//     this -> accept();
+// }
